@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>현장의 언어가 된 AI — 건설사 AI 실습 워크북</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<style>
+  :root{
+    --coral:#FF5A4F; --magenta:#E8358C; --blue:#2964FF; --purple:#6B47DC;
+    --ink:#181818; --charcoal:#2A2A2A; --slate:#555; --steel:#7A7A7A; --stone:#9A9A9A;
+    --surface:#F4F4F4; --soft:#FAFAFA; --hair:#E5E5E5; --hairsoft:#EFEFEF; --canvas:#fff;
+    --blue700:#1F3D8A;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0; padding:0;}
+  body{font-family:"Pretendard","Apple SD Gothic Neo","Malgun Gothic",system-ui,-apple-system,sans-serif;
+    color:var(--ink); background:#fff; line-height:1.5; -webkit-font-smoothing:antialiased;}
+  a{color:var(--blue700); text-decoration:none;} a:hover{text-decoration:underline;}
+
+  /* header */
+  header{position:sticky; top:0; z-index:50; background:rgba(255,255,255,.96);
+    backdrop-filter:saturate(160%) blur(8px); border-bottom:1px solid var(--hair);}
+  .hwrap{max-width:920px; margin:0 auto; padding:14px 18px 0;}
+  .brand{display:flex; align-items:center; gap:8px; font-weight:800; letter-spacing:.5px; font-size:13px; color:var(--ink);}
+  .brand .sq{width:13px; height:13px; background:var(--coral); border-radius:3px;}
+  h1{font-size:21px; font-weight:800; margin:8px 0 2px; letter-spacing:-.4px;}
+  .sub{font-size:13px; color:var(--steel); margin-bottom:12px;}
+  .note{background:#FFF4F2; border:1px solid #FFD9D3; color:#9b342b; font-size:12.5px;
+    padding:9px 12px; border-radius:10px; margin-bottom:12px;}
+  .note b{color:var(--coral);}
+  /* tabs */
+  nav{display:flex; gap:8px; overflow-x:auto; padding-bottom:12px; scrollbar-width:none;}
+  nav::-webkit-scrollbar{display:none;}
+  .tab{flex:0 0 auto; border:1px solid var(--hair); background:#fff; color:var(--steel);
+    font-family:inherit; font-size:13px; font-weight:700; padding:8px 14px; border-radius:999px;
+    cursor:pointer; white-space:nowrap; transition:.15s;}
+  .tab:hover{border-color:var(--stone);}
+  .tab.active{background:var(--ink); color:#fff; border-color:var(--ink);}
+  .tab .dot{display:inline-block; width:7px; height:7px; border-radius:50%; margin-right:6px; vertical-align:middle;}
+
+  main{max-width:920px; margin:0 auto; padding:18px 18px 80px;}
+  section{display:none; animation:fade .25s ease;}
+  section.on{display:block;}
+  @keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+
+  .lead{font-size:14.5px; color:var(--slate); margin:2px 0 18px; padding-left:14px; border-left:4px solid var(--coral);}
+  .lead.b{border-color:var(--blue);} .lead.m{border-color:var(--magenta);} .lead.p{border-color:var(--purple);}
+  h2.sec{font-size:18px; font-weight:800; margin:26px 0 10px; letter-spacing:-.3px; display:flex; align-items:center; gap:9px;}
+  h2.sec .bar{width:6px; height:20px; border-radius:3px; background:var(--coral);}
+  h2.sec.b .bar{background:var(--blue);} h2.sec.m .bar{background:var(--magenta);} h2.sec.p .bar{background:var(--purple);}
+  h3.grp{font-size:15.5px; font-weight:800; margin:20px 0 4px;}
+  .glabel{font-size:12px; font-weight:800; color:#fff; padding:3px 9px; border-radius:999px; display:inline-block; margin-bottom:8px;}
+
+  /* info card (no copy) */
+  .info{background:var(--surface); border-radius:14px; padding:14px 16px; margin:10px 0; font-size:13.5px; color:var(--charcoal);}
+  .info b{color:var(--ink);}
+  .steps{counter-reset:s; display:grid; gap:10px; margin:8px 0 4px;}
+  .step{display:flex; gap:12px; background:#fff; border:1px solid var(--hair); border-radius:14px; padding:13px 15px;}
+  .step .n{counter-increment:s; flex:0 0 30px; height:30px; border-radius:50%; background:var(--ink); color:#fff;
+    font-weight:800; display:flex; align-items:center; justify-content:center; font-size:14px;}
+  .step .n::before{content:counter(s);}
+  .step h4{margin:2px 0 4px; font-size:14.5px; font-weight:800;}
+  .step p{margin:0; font-size:13px; color:var(--slate);}
+
+  /* practice card (with copy) */
+  .pcard{border:1px solid var(--hair); border-radius:16px; padding:15px 16px; margin:12px 0; background:#fff;}
+  .badge{font-size:11px; font-weight:800; color:#fff; padding:3px 9px; border-radius:999px; display:inline-block; margin-bottom:9px;}
+  .b-law{background:var(--purple);} .b-arch{background:var(--purple);} .b-kosis{background:var(--purple);}
+  .b-basic{background:var(--blue);} .b-proj{background:var(--blue);} .b-dr{background:var(--coral);}
+  .b-task{background:var(--blue);} .b-gpt{background:var(--blue);} .b-int{background:var(--magenta);}
+  .b-data{background:#0E9F6E;} .b-doc{background:#E8358C;} .b-meet{background:#6B47DC;}
+  .scn{font-size:14.5px; font-weight:800; color:var(--ink); margin-bottom:10px;}
+  .scn .q{color:var(--steel); font-weight:600; font-size:13px;}
+  .promptwrap{position:relative; background:#0f1115; border-radius:12px; padding:14px 14px 14px; }
+  pre.prompt{margin:0; white-space:pre-wrap; word-break:break-word; color:#eef1f6;
+    font-family:"Pretendard",ui-monospace,monospace; font-size:13px; line-height:1.62; padding-right:70px;}
+  .copy{position:absolute; top:10px; right:10px; background:var(--coral); color:#fff; border:none;
+    font-family:inherit; font-weight:800; font-size:12.5px; padding:8px 13px; border-radius:9px; cursor:pointer; transition:.15s;}
+  .copy:hover{filter:brightness(1.05);} .copy.done{background:#1F7A2E;}
+  .meta{font-size:12.8px; color:var(--slate); margin-top:9px; padding-left:2px;}
+  .meta b{color:var(--ink); margin-right:5px;}
+  .meta.tip{color:var(--blue700);} .meta.tip b{color:var(--blue700);}
+  .fill{color:var(--coral); font-weight:700;}
+
+  /* good/bad */
+  .gb{display:grid; grid-template-columns:1fr; gap:0; border:1px solid var(--hair); border-radius:14px; overflow:hidden; margin:12px 0;}
+  .gb .bad,.gb .good{padding:13px 15px; font-size:13.5px;}
+  .gb .bad{background:#FFF4F2; color:#9b342b;}
+  .gb .good{background:#EAF6EC; color:#1F5A2C; border-top:1px solid #cdebd3;}
+  .gb .lab{font-weight:800; font-size:11.5px; letter-spacing:.4px; display:block; margin-bottom:3px; opacity:.8;}
+  .gb .why{font-size:12px; color:var(--steel); padding:9px 15px; background:#fff;}
+
+  .reflist{display:grid; gap:8px;}
+  .reflist .r{border:1px solid var(--hair); border-radius:12px; padding:11px 14px; font-size:13.5px; color:var(--charcoal);}
+  .reflist .r b{color:var(--ink);}
+
+  footer{max-width:920px; margin:0 auto; padding:22px 18px 50px; border-top:1px solid var(--hair); color:var(--stone); font-size:12px;}
+  footer b{color:var(--steel);}
+
+  /* toast */
+  #toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:#fff; font-size:13px; font-weight:700; padding:11px 18px; border-radius:999px;
+    opacity:0; pointer-events:none; transition:.25s; z-index:200; box-shadow:0 8px 24px rgba(0,0,0,.18);}
+  #toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+  @media(max-width:560px){ h1{font-size:19px;} main{padding:16px 14px 80px;} .hwrap{padding:12px 14px 0;} }
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <div class="brand"><span class="sq"></span> ITCL · IT커뮤니케이션연구소</div>
+    <h1>현장의 언어가 된 AI — 실습 워크북</h1>
+    <div class="sub">건설사 실무자를 위한 ChatGPT · MCP 실전 · 김덕진 소장 · ITCL</div>
+    <div class="note"><b>강연 중에는 몇 가지만 함께 해봅니다.</b> 나머지는 자리로 돌아가 그대로 따라 하세요. 프롬프트의 <span class="fill">[대괄호]</span> 부분만 우리 상황으로 바꾸면 됩니다.</div>
+    <nav id="tabs"></nav>
+  </div>
+</header>
+
+<main id="content"></main>
+
+<footer>
+  <b>IT커뮤니케이션연구소(ITCL)</b> · 김덕진 소장 · 2026<br>
+  본 워크북의 MCP 실습은 ChatGPT 개발자 모드에 연결된 공개 서버(국가법령정보·국토부 건축HUB·국가데이터처 KOSIS)를 사용합니다. 민감정보(개인정보·계약 원본) 입력은 신중히 하세요.
+</footer>
+
+<div id="toast">복사됐어요</div>
+
+<script>
+/* ---------- safe scroll (jsdom-safe) ---------- */
+function safeScroll(el){ try{ if(el&&el.scrollIntoView) el.scrollIntoView({behavior:"smooth",block:"start"}); }catch(e){} }
+
+/* ---------- prompt registry ---------- */
+var PROMPTS={}, pid=0;
+function P(t){ var k="p"+(pid++); PROMPTS[k]=t; return k; }
+function pcard(badge, scn, prompt, expect, tip){
+  var k=P(prompt);
+  return '<div class="pcard">'
+    + (badge?'<span class="badge '+badge.cls+'">'+badge.txt+'</span>':'')
+    + '<div class="scn">'+scn+'</div>'
+    + '<div class="promptwrap"><pre class="prompt" data-k="'+k+'"></pre>'
+    + '<button class="copy" onclick="copyFrom(this)">복사</button></div>'
+    + (expect?'<div class="meta"><b>기대 결과</b>'+expect+'</div>':'')
+    + (tip?'<div class="meta tip"><b>응용</b>'+tip+'</div>':'')
+    + '</div>';
+}
+function L(txt,cls){ return '<div class="lead '+(cls||'')+'">'+txt+'</div>'; }
+function H(txt,cls){ return '<h2 class="sec '+(cls||'')+'"><span class="bar"></span>'+txt+'</h2>'; }
+
+/* badges */
+var B={law:{cls:'b-law',txt:'법령 MCP'},arch:{cls:'b-arch',txt:'건축HUB MCP'},kosis:{cls:'b-kosis',txt:'KOSIS MCP'},
+  basic:{cls:'b-basic',txt:'기본'},proj:{cls:'b-proj',txt:'프로젝트'},dr:{cls:'b-dr',txt:'심층 리서치'},
+  task:{cls:'b-task',txt:'예약 작업'},gpt:{cls:'b-gpt',txt:'맞춤형 GPT'},int:{cls:'b-int',txt:'통합 에이전트'},
+  data:{cls:'b-data',txt:'데이터 분석'},doc:{cls:'b-doc',txt:'문서 작성'},meet:{cls:'b-meet',txt:'회의록'}};
+
+/* ============================ TABS ============================ */
+var TABS=[
+ {id:'prep', label:'① 준비 · 연결', color:'var(--coral)'},
+ {id:'basic',label:'② ChatGPT 기본', color:'var(--blue)'},
+ {id:'adv',  label:'③ 고급 기능', color:'var(--blue)'},
+ {id:'files',label:'④ 파일 실습', color:'#0E9F6E'},
+ {id:'law',  label:'⑤ 법령 MCP', color:'var(--purple)'},
+ {id:'arch', label:'⑥ 건축HUB MCP', color:'var(--purple)'},
+ {id:'kosis',label:'⑦ KOSIS MCP', color:'var(--purple)'},
+ {id:'int',  label:'⑧ 통합 에이전트', color:'var(--magenta)'},
+ {id:'ref',  label:'⑨ 발문 · 프롬프트 모음', color:'var(--coral)'}
+];
+
+/* ============================ CONTENT ============================ */
+var S={};
+
+/* ---- ① 준비 ---- */
+S.prep =
+  L('실습 전 5분 세팅. ChatGPT(웹, Plus 이상 권장)에서 ‘개발자 모드’를 켜고 3개의 MCP를 연결합니다. 강연장에서는 이미 연결된 화면으로 시연합니다.','')
+  + H('ChatGPT에 MCP 연결하기 (웹)')
+  + '<div class="steps">'
+  + '<div class="step"><div class="n"></div><div><h4>설정 → 커넥터(Apps) → 고급</h4><p>‘개발자 모드(Developer mode / MCP)’를 켭니다. (ChatGPT Plus·Pro·Team, 웹 기준)</p></div></div>'
+  + '<div class="step"><div class="n"></div><div><h4>대화창에서 개발자 모드 선택</h4><p>도구 메뉴에서 개발자 모드를 활성화하면 연결한 MCP 서버를 호출할 수 있습니다.</p></div></div>'
+  + '<div class="step"><div class="n"></div><div><h4>MCP 서버 3개 등록</h4><p>아래 3개 서버 URL을 등록합니다. 정부 공식 API(법제처·국토부·통계청)를 그대로 호출하는 공개·검증 서버입니다.</p></div></div>'
+  + '<div class="step"><div class="n"></div><div><h4>호출할 때는 “○○ MCP를 사용해서…”</h4><p>프롬프트에 어떤 MCP를 쓸지 명시하면 가장 안정적으로 동작합니다. (이 워크북 프롬프트엔 이미 포함되어 있어요)</p></div></div>'
+  + '</div>'
+  + H('연결할 3대 MCP','p')
+  + '<div class="info"><b>국가법령정보 MCP</b> — 법제처 법령·판례·계약 검토·환각 차단<br>'
+    + '<a href="https://chris.gomdori.app/pages/korean-law-mcp" target="_blank" rel="noopener">chris.gomdori.app/pages/korean-law-mcp</a> · '
+    + '<a href="https://github.com/chrisryugj/korean-law-mcp" target="_blank" rel="noopener">GitHub</a></div>'
+  + '<div class="info"><b>국토교통부 건축HUB MCP</b> — 건축물대장·노후건물·공시지가<br>'
+    + '<a href="https://chris.gomdori.app/pages/archhub-mcp" target="_blank" rel="noopener">chris.gomdori.app/pages/archhub-mcp</a> · '
+    + '<a href="https://github.com/chrisryugj/archhub-mcp" target="_blank" rel="noopener">GitHub</a></div>'
+  + '<div class="info"><b>국가데이터처 KOSIS MCP</b> — 인구·주택가격·지역경제 통계<br>'
+    + '<a href="https://chris.gomdori.app/pages/korean-stats-mcp" target="_blank" rel="noopener">chris.gomdori.app/pages/korean-stats-mcp</a> · '
+    + '<a href="https://github.com/chrisryugj/korean-stats-mcp" target="_blank" rel="noopener">GitHub</a></div>'
+  + H('안전 수칙 (꼭 지키기)')
+  + '<div class="info">• 신뢰할 수 없는 MCP 서버는 연결하지 않습니다(프롬프트 인젝션·정보 유출 위험). 오늘 3개는 공개·검증된 서버입니다.<br>'
+    + '• AI가 ‘쓰기/전송’ 같은 작업을 제안하면 <b>실행 전 반드시 확인</b>합니다.<br>'
+    + '• 계약 원본·개인정보 등 민감정보 입력은 신중히. 필요한 부분만 발췌해 넣으세요.</div>';
+
+/* ---- ② ChatGPT 기본 ---- */
+S.basic =
+  L('MCP 없이도 오늘 당장 쓰는 6가지. 모든 프롬프트는 ‘맥락·역할·형식·예시’ 4요소로 짜여 있습니다. [대괄호]만 바꾸세요.','b')
+  + pcard(B.basic,'1. 발주처 공문·회신 초안 <span class="q">— 격식 갖춘 문서를 1분 만에</span>',
+    '너는 [우리 회사] [공사팀] 담당자야. 아래 상황으로 [발주처]에 보낼 공문 초안을 작성해줘.\n\n[상황: 예) 우천으로 인한 공기 연장 협조 요청, 7일]\n\n조건:\n- 건설 실무에서 쓰는 정중하고 간결한 공문체\n- 제목 / 수신 / 본문(배경·요청사항·근거) / 맺음말 구조\n- A4 반 장 분량, 군더더기 없이',
+    '바로 검토·발송할 수 있는 공문 초안.',
+    '“조금 더 강하게/부드럽게”, “법적 근거 한 줄 추가” 등으로 톤을 조정하세요.')
+  + pcard(B.basic,'2. 회의록 → 실행계획 변환 <span class="q">— 녹취·메모를 To-do로</span>',
+    '아래는 [현장 공정회의] 메모야. 이걸 실행계획표로 바꿔줘.\n\n[회의 메모 붙여넣기]\n\n표 형식: 할 일 | 담당(부서/이름) | 기한 | 비고\n- 애매한 항목은 ‘확인 필요’로 표시\n- 맨 아래에 이번 주 안에 끝내야 할 일 3가지를 따로 요약',
+    '담당·기한이 정리된 실행계획표 + 우선순위 3가지.',
+    'STT(받아쓰기) 결과를 그대로 붙여넣어도 됩니다.')
+  + pcard(B.basic,'3. 시방서·계약서 핵심 요약 <span class="q">— 수십 장에서 쟁점만</span>',
+    '아래 [시방서/계약서] 내용을 핵심만 요약해줘.\n\n[문서 텍스트 붙여넣기]\n\n- 우리(시공사)가 꼭 지켜야 할 의무 / 기한 / 페널티를 표로\n- 애매하거나 불리해 보이는 조항은 ‘⚠ 확인 필요’로 별도 표시\n- 전문 용어는 괄호로 쉬운 설명 추가',
+    '의무·기한·위험조항이 한눈에 들어오는 요약표.',
+    '법적 검토가 필요하면 ‘법령 MCP’ 탭에서 교차검증하세요.')
+  + pcard(B.basic,'4. 견적 항목 비교·누락 점검 <span class="q">— 두 견적서의 차이</span>',
+    '아래 두 [견적서]를 비교해줘.\n\n[견적서 A]\n[견적서 B]\n\n- 항목별 단가·수량·금액을 나란히 표로\n- 한쪽에만 있는 항목(누락 의심)을 강조\n- 단가 차이가 큰 항목 TOP 5와 점검 포인트\n- 마지막에 협상 시 활용할 질문 3가지',
+    '항목 비교표 + 누락·과다 항목 + 협상 포인트.',
+    '표 형식이 깨지면 “표를 다시 정리해줘”라고 하면 됩니다.')
+  + pcard(B.basic,'5. 분양 홍보 카피 3안 <span class="q">— 톤별로 한 번에</span>',
+    '[우리 단지]의 분양 홍보 문구를 3가지 톤으로 만들어줘.\n\n단지 특징: [예) 역세권, 4베이 판상형, 대단지, 학군]\n타깃: [예) 30~40대 실수요자]\n\n- (1) 신뢰·프리미엄형 (2) 감성·라이프스타일형 (3) 실속·가성비형\n- 각 안마다 헤드카피 1줄 + 서브카피 2줄\n- 과장광고 소지가 있는 표현은 피해줘',
+    '톤이 다른 카피 3안 (헤드+서브).',
+    '마음에 드는 안을 골라 “이 톤으로 현수막/리플릿 버전도” 요청.')
+  + pcard(B.basic,'6. 위험성평가·안전교육 초안 <span class="q">— 현장 안전 문서</span>',
+    '[작업: 예) 동절기 콘크리트 타설] 작업의 위험성평가 초안을 만들어줘.\n\n- 주요 위험요인 → 발생 가능 사고 → 사전 예방조치 표\n- 관련해 작업 전 안전점검(TBM)에서 강조할 3가지\n- 작업자 대상 5분 안전교육 스크립트(쉬운 말투)\n\n※ 법적 기준은 ‘법령 MCP’ 탭에서 별도 확인 예정',
+    '위험성평가 표 + TBM 포인트 + 교육 스크립트.',
+    '중대재해 관련 법적 의무는 ‘법령 MCP’ 탭에서 실제 조문으로 확인하세요.');
+
+/* ---- ③ 고급 기능 ---- */
+S.adv =
+  L('ChatGPT는 ‘채팅창’이 전부가 아닙니다. 거의 안 쓰는 4가지 기능으로 ChatGPT가 ‘업무 시스템’이 됩니다.','b')
+  + H('프로젝트 (Projects) — 현장·사업별 전용 작업실','b')
+  + '<div class="info"><b>무엇인가</b> 채팅·파일(한 번에 10개)·지침을 한 주제로 묶는 작업 폴더. 그 안에서 물으면 올려둔 자료·맥락을 우선 참조합니다. (전 요금제, Plus·Pro는 프로젝트 내 대화도 기억, Business는 팀 공유)<br><b>여는 법</b> 왼쪽 메뉴 → ‘프로젝트’ → 새 프로젝트 → 파일 업로드 + 지침 입력.</div>'
+  + pcard(B.proj,'프로젝트 지침 예시 <span class="q">— ‘○○현장’ 프로젝트에 붙여넣기</span>',
+    '이 프로젝트는 ‘[○○현장] 시공 관리’ 전용이야. 다음 지침을 항상 따라줘.\n\n- 나는 [우리 회사] [공사팀] 담당자다.\n- 업로드한 도면·시방서·공정표·계약서를 우선 근거로 삼아라.\n- 답변엔 항상 ‘근거가 된 문서/페이지’를 표시하고, 자료에 없으면 ‘자료에 없음’이라고 분명히 말해라.\n- 숫자(물량·단가·기한)는 추정하지 말고 자료 그대로 인용해라.',
+    '현장 전담 비서처럼, 매번 배경 설명 없이 바로 묻고 답할 수 있음.',
+    '현장마다 프로젝트 하나씩. 도면·시방서·공정표를 넣어두세요.')
+  + pcard(B.proj,'사업성 검토 프로젝트 <span class="q">— 자료를 모아두고 반복 질문</span>',
+    '이 프로젝트는 ‘[△△ 재건축/가로주택] 사업성 검토’ 전용이야.\n\n- 올려둔 등기부·조례·통계·시세 자료를 기준으로만 답해라.\n- 내가 단편적으로 물어도, 사업성 판단에 필요한 다른 항목이 빠졌으면 먼저 짚어줘라.\n- 결론은 항상 ‘기회요인 / 리스크 / 추가 확인 필요’ 3줄로 정리해라.',
+    '여러 번에 걸친 검토를 한 맥락에서 이어갈 수 있음.',
+    '뒤의 MCP 탭(법령·건축HUB·KOSIS)에서 받은 데이터를 이 프로젝트에 모아두세요.')
+
+  + H('심층 리서치 (Deep Research) — 30분 만의 조사 보고서','b')
+  + '<div class="info"><b>무엇인가</b> 수백 개 출처를 스스로 찾아 종합해, 인용이 달린 보고서를 만드는 기능(보통 5~30분, PDF·DOCX 저장). 도구 메뉴(+)에서 ‘심층 리서치’ 선택.<br><b>2026.2 업데이트</b> 심층 리서치를 MCP·앱에 직접 연결(읽기), 신뢰할 수 있는 사이트로 검색 제한 가능 → ‘통합 에이전트’ 탭과 결합하면 강력합니다.</div>'
+  + pcard(B.dr,'지역 시장 조사 보고서 <span class="q">— 분양/사업 검토 배경자료</span>',
+    '심층 리서치로 [지역: 예) 청주 흥덕구] 주택·분양 시장을 조사해줘.\n\n포함:\n- 최근 3년 공급/분양/미분양 동향\n- 가격·청약 경쟁률 추세\n- 개발 호재·교통·인구 유입 요인\n- 우리(중견 건설사) 분양 관점의 기회와 리스크\n\n기업 보도자료·공공 통계·신뢰 매체를 우선 인용하고, 날짜와 출처 링크를 붙여줘.',
+    '인용·출처가 달린 시장 조사 보고서(PDF로 저장 가능).',
+    '“신뢰할 수 있는 사이트로 제한”을 켜면 품질이 올라갑니다.')
+  + pcard(B.dr,'유사 단지·경쟁 분석 <span class="q">— 상품 기획 인사이트</span>',
+    '심층 리서치로 [지역/생활권]의 최근 분양 단지를 조사해서 우리 [우리 단지]와 비교해줘.\n\n- 평형 구성·특화 설계·커뮤니티·분양가 비교표\n- 청약 결과로 본 시장 선호\n- 우리가 차별화할 수 있는 포인트 3가지\n\n각 항목에 출처를 달아줘.',
+    '경쟁 단지 비교표 + 차별화 포인트.',
+    '결과를 프로젝트에 저장해 분양 회의 자료로 발전시키세요.')
+
+  + H('예약 작업 (Tasks) — 매일 아침 자동 브리핑','b')
+  + '<div class="info"><b>무엇인가</b> 지정한 시각·반복 주기에 프롬프트가 자동 실행되고, 완료되면 푸시·이메일로 알림(최대 10개 활성, Plus·Pro·Business 베타). 프로필 → ‘작업(Tasks)’ 메뉴.<br><b>팁</b> 프롬프트는 짧고 명확하게. ‘1분 후 테스트’로 먼저 확인하세요.</div>'
+  + pcard(B.task,'매일 아침 업계 뉴스 브리핑 <span class="q">— 출근하면 도착</span>',
+    '매일 오전 8시에, 어제~오늘 국내 건설·부동산·금리 관련 주요 뉴스를 5줄로 요약해줘. 각 줄 끝에 한 줄 시사점과 출처 링크를 붙여줘. 우리(중견 건설사) 관점에서 중요한 것 위주로.',
+    '매일 아침 핵심 뉴스 5줄 요약 + 시사점이 자동 도착.',
+    '“키워드를 너무 많이 넣으면 옛 기사가 섞일 수 있다” — 간결하게.')
+  + pcard(B.task,'주간 인허가·정책 모니터링 <span class="q">— 매주 월요일</span>',
+    '매주 월요일 오전 9시에, [관심 지역: 예) 청주·평택] 관련 건축·정비사업 인허가, 부동산 정책·규제 변화 소식을 정리해줘. 새로운 것만 bullet로, 출처와 함께.',
+    '매주 우리 사업지 인근 인허가·정책 업데이트가 자동 정리.',
+    '여러 지역이면 작업을 지역별로 나눠 만드세요.')
+
+  + H('맞춤형 GPT (Custom GPT) — 우리 회사 전용 챗봇','b')
+  + '<div class="info"><b>무엇인가</b> 지침 + 지식파일 + 액션으로 특정 업무 전용 봇을 노코드로 제작. 링크로 사내 공유 가능. <b>한계</b> 입력한 지식 안에서만 똑똑함 → 최신 법·통계는 MCP가 필요합니다.<br><b>만드는 법</b> ‘GPT 만들기(Explore GPTs → 만들기)’ → 지침 입력 → 지식파일 업로드.</div>'
+  + pcard(B.gpt,'사규봇 지침 <span class="q">— 취업규칙·복무규정 업로드 후</span>',
+    '너는 [우리 회사] ‘사내 규정 안내봇’이야.\n\n- 업로드된 취업규칙·복무·경조·휴가 규정 문서에 근거해서만 답해라.\n- 답변 끝에 ‘근거: ○○규정 제○조’를 표시해라.\n- 문서에 없는 내용은 추측하지 말고 ‘담당: 인사팀에 확인 필요’라고 안내해라.\n- 말투는 친절하고 간결하게.',
+    '직원들의 인사·복무 FAQ를 일관된 품질로 자동 응대.',
+    '규정 개정 시 지식파일만 교체하면 됩니다.')
+  + pcard(B.gpt,'견적봇 지침 <span class="q">— 표준 단가·항목 기준</span>',
+    '너는 [우리 회사] ‘견적 보조봇’이야.\n\n- 업로드된 표준 단가표·과거 견적 양식을 기준으로 견적 초안을 만들어라.\n- 사용자가 공종·물량을 주면 항목·단가·금액 표로 정리해라.\n- 표준 단가에 없는 항목은 ‘별도 확인 필요’로 표시해라.\n- 마지막에 누락 가능 항목 체크리스트를 덧붙여라.',
+    '신입도 표준 양식에 맞는 견적 초안을 빠르게 작성.',
+    '실제 최신 자재 시세는 ChatGPT 검색/심층 리서치로 보완하세요.');
+
+/* ---- ④ 법령 MCP ---- */
+S.law =
+  L('계약·안전은 ‘정확한 조문’이 곧 책임입니다. 법령 MCP는 법제처 공식 데이터로 답하고, AI가 지어낸 가짜 조문을 잡아냅니다.','p')
+  + pcard(B.law,'1. 중대재해처벌법 경영책임자 의무 <span class="q">— 현장 체크리스트로</span>',
+    '국가법령정보 MCP를 사용해서 중대재해처벌법 제4조·제5조의 경영책임자 안전·보건 확보의무를 현행 기준으로 정리해줘. 그리고 건설현장 관리자가 바로 점검할 수 있는 체크리스트 형태로 바꿔줘. 각 항목에 근거 조문을 표시해줘.',
+    '제4·5조 의무 + 현장 점검 체크리스트(근거 조문 포함).',
+    '“우리 현장 규모[○○]에 맞춰 우선순위를 매겨줘”로 확장.')
+  + pcard(B.law,'2. 하도급 계약 독소조항 검토 <span class="q">— 불리한 조항 찾기</span>',
+    '국가법령정보 MCP를 사용해서 아래 하도급 계약 조항을 검토해줘. 건설산업기본법·하도급거래공정화법 기준으로 우리(수급인/하도급사)에게 불리한 독소조항을 위험도 순으로 짚고, 수정 문구를 제안해줘. 각 지적에 근거 법령을 달아줘.\n\n[계약 조항 붙여넣기]',
+    '위험조항 목록 + 수정 제안 + 근거 법령.',
+    '계약 ‘원본 전체’ 대신 쟁점 조항만 발췌해 넣으세요.')
+  + pcard(B.law,'3. 하도급대금 지급·지연이자 <span class="q">— 분쟁 대비 근거</span>',
+    '국가법령정보 MCP로 하도급대금 직접지급 사유와 지연이자(지연손해금) 관련 규정을 관련 법령과 함께 정리해줘. 가능하면 관련 판례·해석례 요지도 1~2건 덧붙여줘.',
+    '직접지급 사유·지연이자 규정 + 판례 요지.',
+    '실제 사건이면 “이 상황[요약]에 적용되는지” 물어보세요.')
+  + pcard(B.law,'4. 지자체 건축 조례 비교 <span class="q">— 여러 현장 운영 시</span>',
+    '국가법령정보 MCP를 사용해서 ‘[A 지자체] 건축 조례’와 ‘[B 지자체] 건축 조례’의 [높이·일조·주차] 규정 차이를 표로 비교해줘. 상위 법령(건축법)과 어긋나는 부분이 있으면 표시해줘.',
+    '지자체별 조례 차이 비교표 + 상위법 적합성.',
+    '신규 진출 지역의 규제를 빠르게 파악할 때 유용.')
+  + pcard(B.law,'5. ⚠ 환각(가짜 조문) 교차검증 <span class="q">— 가장 중요한 습관</span>',
+    '국가법령정보 MCP로, 방금 일반 ChatGPT가 인용한 “[법령명 제○조 제○항]”이 실제 존재하는 조문인지, 인용 내용이 현행 조문과 일치하는지 교차검증해줘. 다르면 실제 조문 전문을 보여줘.',
+    '“실제 존재/일치 여부 + 현행 조문 전문”으로 확인.',
+    '계약서·안전보고서에 법 조항을 넣기 전 항상 이 단계를.')
+  + pcard(B.law,'6. 지체상금 관련 판례 <span class="q">— 사례 근거 찾기</span>',
+    '국가법령정보 MCP를 사용해서 ‘지체상금’ 또는 ‘공기 지연 손해배상’ 관련 대법원 판례 핵심 요지를 2~3건 찾아 정리해줘. 각 판례의 결론과 시사점을 한 줄씩 붙여줘.',
+    '관련 판례 요지 2~3건 + 시사점.',
+    '계약 협상·클레임 대응 논리로 활용하세요.');
+
+/* ---- ⑤ 건축HUB MCP ---- */
+S.arch =
+  L('주소 한 줄이면 건물 한 채가 데이터로. 토지매입·재건축·정비사업 검토의 출발점을 빠르게.','p')
+  + pcard(B.arch,'1. 건축물대장 표제부 조회 <span class="q">— 기본 제원 한눈에</span>',
+    '국토부 건축HUB MCP를 사용해서 [도로명주소]의 건축물대장 표제부를 조회해줘. 용도지역·주용도·구조·층수·연면적·건폐율·용적률·사용승인일을 표로 정리하고, 노후도(준공 후 경과연수)도 계산해줘.',
+    '대장 핵심 제원 표 + 경과연수.',
+    '“우리가 검토 중인 [용도]로 개발 가능한지 한 줄 평가”도 요청.')
+  + pcard(B.arch,'2. 노후 건물 선별 (재건축 후보) <span class="q">— 정비사업 발굴</span>',
+    '국토부 건축HUB MCP로 [자치구/동] 일대에서 사용승인 후 [40]년 이상 된 노후 건축물을 찾아줘. 주소·준공연도·용도·층수를 표로 정리하고, 가로주택·소규모재건축 후보로 볼 만한 곳을 표시해줘.',
+    '노후 건물 리스트 + 정비 후보 표시.',
+    '“대지면적 [○○㎡] 이상만” 등 조건을 추가해 좁히세요.')
+  + pcard(B.arch,'3. 공시지가 추이·CAGR <span class="q">— 토지 가치 근거</span>',
+    '국토부 건축HUB MCP를 사용해서 [주소] 토지의 최근 10년 개별공시지가 추이를 조회하고, 연평균 변화율(CAGR)과 최근 급등/안정 구간을 정리해줘. 출처를 표시해줘.',
+    '공시지가 시계열 + CAGR + 변동 해석.',
+    '인접 필지와 비교해 매입가 협상 근거로 쓰세요.')
+  + pcard(B.arch,'4. 석면·철거 이력 점검 <span class="q">— 리스크 사전 확인</span>',
+    '국토부 건축HUB MCP로 [주소] 건축물의 석면 조사 이력과 철거(멸실) 이력이 있는지 확인해줘. 있으면 시점과 내용을 정리해줘.',
+    '석면·철거 이력 유무 및 내용.',
+    '노후 건물 매입·철거 검토 시 비용·공정 리스크 파악.')
+  + pcard(B.arch,'5. 사업지 토지 종합 검토 <span class="q">— 개발 가능성 한 줄</span>',
+    '국토부 건축HUB MCP를 사용해서 [주소]의 지목·대지면적·용도지역·건폐율/용적률 상한을 조회하고, 인접 필지 정보를 정리해줘. 마지막에 이 땅의 개발 가능성을 한 문단으로 평가해줘(추정은 ‘추정’이라고 표시).',
+    '토지 제원 + 인접 정보 + 개발 가능성 평가.',
+    '‘KOSIS MCP’ 수요 데이터와 합치면 사업성 검토가 완성됩니다.');
+
+/* ---- ⑥ KOSIS MCP ---- */
+S.kosis =
+  L('분양·사업성의 ‘숫자 근거’. ChatGPT가 기억으로 찍어주는 옛 통계 대신, 통계청 실측을 출처와 함께.','p')
+  + pcard(B.kosis,'1. 분양 입지 인구·가구 <span class="q">— 수요 기초 체력</span>',
+    '국가데이터처 KOSIS MCP를 사용해서 [지역: 예) 청주시]의 최근 인구·세대수·연령 구조를 조회해줘. 분양 수요 관점(주 수요층·세대 분화·인구 추세)에서 요약하고, 통계표 출처를 붙여줘.',
+    '인구·세대·연령 요약 + 수요 관점 해석 + 출처.',
+    '“최근 5년 추세도 함께”로 확장하면 좋습니다.')
+  + pcard(B.kosis,'2. 아파트 매매가격 추이 비교 <span class="q">— 시장 국면 파악</span>',
+    '국가데이터처 KOSIS MCP로 전국과 [지역] 아파트매매가격지수 최근 5년 추이를 비교해줘. 상승/하락 국면을 짚고, 통계표 ID(출처)를 반드시 붙여줘.',
+    '전국 vs 지역 가격지수 추이 + 국면 해석 + 출처 ID.',
+    '분양 타이밍·가격 책정 논의의 근거 자료로.')
+  + pcard(B.kosis,'3. 두 지역 사업성 비교 <span class="q">— 후보지 우열</span>',
+    '국가데이터처 KOSIS MCP를 사용해서 [A시]와 [B시]의 인구증가율·고령화·소득(또는 지역경제) 지표를 표로 비교해줘. 신규 주택 사업 관점에서 어느 쪽이 더 매력적인지 근거와 함께 평가해줘.',
+    '지역 비교표 + 사업성 우열 평가.',
+    '최종 판단 전 ‘건축HUB MCP’로 공급 측면도 확인하세요.')
+  + pcard(B.kosis,'4. 1인 가구·고령화 → 상품 기획 <span class="q">— 평형/특화 설계</span>',
+    '국가데이터처 KOSIS MCP로 [지역]의 1인 가구 비율과 고령인구 추이를 조회해줘. 이 데이터로 평형 구성·특화 설계(예: 소형·시니어 친화)에 줄 시사점을 정리해줘.',
+    '가구·고령 데이터 + 상품 기획 시사점.',
+    '“커뮤니티 시설 기획 아이디어도”로 이어가세요.')
+  + pcard(B.kosis,'5. 지역경제 활력 지표 <span class="q">— 배후 수요·일자리</span>',
+    '국가데이터처 KOSIS MCP를 사용해서 [지역]의 사업체 수·종사자 수 등 지역경제 활력 지표를 조회해 요약해줘. 일자리 기반이 주택 수요에 주는 함의를 한 문단으로.',
+    '지역경제 지표 요약 + 수요 함의.',
+    '산업단지·대형 고용처 인근 사업지 검토에 유용.');
+
+/* ---- ⑦ 통합 에이전트 ---- */
+S.int =
+  L('세 MCP + 심층 리서치를 한 번에. 한 줄 지시로 법무·조사·기획·비서가 동시에 일합니다. — 이것이 ‘에이전트 보스’입니다.','m')
+  + pcard(B.int,'1. 가로주택 사업지 1page 검토 <span class="q">— 오늘의 클라이맥스</span>',
+    '세 MCP(국가법령정보·국토부 건축HUB·국가데이터처 KOSIS)를 모두 사용해서 [주소/동 일대]의 가로주택정비사업 가능성을 검토해줘.\n\n순서:\n1) 규제·조례 — 해당 지역 정비사업·건축 관련 규정과 제한 (법령 MCP)\n2) 물리적 조건 — 노후도·건축물대장·공시지가 추이 (건축HUB MCP)\n3) 시장·수요 — 인구·세대·아파트가격 추세 (KOSIS MCP)\n\n마지막에 ‘기회요인 / 리스크 / 추가 확인 필요’를 각 3줄로, 한 페이지로 요약해줘. 모든 수치엔 출처를 붙이고, 모르면 ‘데이터 없음’이라고 표시해줘.',
+    '규제·물리·시장을 묶은 사업지 1페이지 검토서(출처 포함).',
+    '결과를 프로젝트에 저장하고 회의 자료로 발전시키세요.')
+  + pcard(B.int,'2. 토지매입 검토 <span class="q">— 개발 부지 의사결정</span>',
+    '국토부 건축HUB MCP와 국가데이터처 KOSIS MCP를 사용해서 [주소] 토지 매입을 검토해줘.\n- 건축HUB: 지목·용도지역·건폐율/용적률·공시지가 추이\n- KOSIS: 인근 지역 인구·집값 추세\n그리고 국가법령정보 MCP로 해당 용도지역의 건축 제한을 확인해줘.\n결론은 ‘매입 매력도(상/중/하)’와 그 근거 3가지로 정리해줘.',
+    '부지 제원·시장·규제 종합 + 매입 매력도 판단.',
+    '“우리 표준 사업성 기준[입력]에 대입해줘”로 정교화.')
+  + pcard(B.int,'3. 심층 리서치 + MCP 결합 <span class="q">— 검증된 시장 보고서</span>',
+    '심층 리서치로 [지역] 부동산·정비사업 동향을 조사하되, 국가법령정보·국토부 건축HUB·국가데이터처 KOSIS MCP의 실측 데이터를 우선 근거로 사용하고, 웹 자료는 신뢰할 수 있는 사이트로 제한해줘. 보고서엔 인용·출처를 모두 표시해줘.',
+    '공식 데이터로 뒷받침된, 인용 달린 시장 보고서.',
+    '심층 리서치 도구에서 “MCP 연결 + 사이트 제한”을 켜세요.');
+
+/* ---- ⑧ 발문 · 프롬프트 모음 ---- */
+S.ref =
+  L('AI 시대의 경쟁력은 ‘답’이 아니라 ‘질문’입니다. 닫힌 질문을 여는 질문(발문)으로 바꾸세요.','')
+  + H('질문 → 발문 (Before / After)')
+  + '<div class="gb"><div class="bad"><span class="lab">✕ 닫힌 질문</span>“이 현장 안전한가요?”</div>'
+    + '<div class="good"><span class="lab">✓ 여는 발문</span>“이 현장에서 중대재해 위험요인 5가지와, 각각의 사전 예방조치를 우선순위로 알려줘.”</div>'
+    + '<div class="why">→ 예/아니오로 닫히지 않고, 실행 가능한 목록이 나옵니다.</div></div>'
+  + '<div class="gb"><div class="bad"><span class="lab">✕ 닫힌 질문</span>“이 계약 괜찮아요?”</div>'
+    + '<div class="good"><span class="lab">✓ 여는 발문</span>“이 계약서에서 우리에게 불리한 조항 3가지를 위험도 순으로, 수정 문구와 함께 제안해줘.”</div>'
+    + '<div class="why">→ 두루뭉술한 안심 대신, 협상에 쓸 구체적 카드가 나옵니다.</div></div>'
+  + '<div class="gb"><div class="bad"><span class="lab">✕ 닫힌 질문</span>“분양 잘 될까요?”</div>'
+    + '<div class="good"><span class="lab">✓ 여는 발문</span>“이 단지의 분양 흥행에 영향을 주는 요인 3가지와, 각 리스크·대응책을 표로 정리해줘.”</div>'
+    + '<div class="why">→ 막연한 전망이 아니라 점검·대응 프레임이 나옵니다.</div></div>'
+  + '<div class="gb"><div class="bad"><span class="lab">✕ 닫힌 질문</span>“견적 비싼가요?”</div>'
+    + '<div class="good"><span class="lab">✓ 여는 발문</span>“이 견적서를 표준 단가와 비교해 과다·누락 항목을 표로 정리하고, 협상 포인트를 제안해줘.”</div>'
+    + '<div class="why">→ 비교 기준과 행동까지 한 번에 얻습니다.</div></div>'
+  + H('좋은 지시의 4요소')
+  + '<div class="reflist">'
+    + '<div class="r"><b>맥락(Context)</b> 누가·어떤 상황인지. “[우리 회사] 공사팀 대리인데…”</div>'
+    + '<div class="r"><b>역할(Role)</b> AI의 관점 지정. “너는 20년차 견적 전문가야.”</div>'
+    + '<div class="r"><b>형식(Format)</b> 결과 형태를 못박기. “표로 / 3안으로 / 이메일로.”</div>'
+    + '<div class="r"><b>예시(Example)</b> 원하는 톤·샘플 하나. “이런 느낌으로: …”</div>'
+    + '</div>'
+  + H('만능 검증 프롬프트','p')
+  + pcard(null,'AI 답변 자가 검증 <span class="q">— 환각 줄이기</span>',
+    '방금 답변에서 ① 사실인지 확실하지 않은 부분, ② 출처가 필요한 수치/법 조항을 표시해줘. 그리고 확인이 필요한 항목은 어디서 검증하면 되는지 알려줘.',
+    '불확실·출처 필요 지점이 표시되어 검증 포인트가 보임.',
+    '중요 문서는 이 프롬프트로 한 번 거른 뒤 사용하세요.')
+  + H('오늘의 한 문장')
+  + '<div class="info" style="font-size:15px; font-weight:700; color:var(--ink);">“추측에서 실측으로, 기억에서 인용으로. — AI는 증폭기이고, 먼저 시도한 사람에게만 AI 마일리지가 쌓입니다.”</div>';
+
+/* ---- ④ 파일 실습 ---- */
+S.files =
+  '<div class="lead" style="border-color:#0E9F6E">실제 업무 파일을 <b>올려서</b> 시키는 실습입니다. ChatGPT 입력창의 <b>+ (또는 클립 📎) 버튼</b>으로 아래 파일을 올린 뒤, 카드의 프롬프트를 붙여넣으세요. 데이터 파일은 ChatGPT가 <b>표·차트</b>까지 만들어 줍니다.</div>'
+  + '<div class="info"><b>이 워크북과 함께 드리는 실습 파일</b> <span style="color:var(--steel);font-size:12px;">(GitHub 업로드용 영문 파일명)</span><br>'
+    + '• <b>safety_inspections.csv</b> — 현장 안전점검 48건<br>'
+    + '• <b>sales_contracts.xlsx</b> — 분양 계약 현황<br>'
+    + '• <b>cs_defects.csv</b> — 하자(CS) 접수 내역<br>'
+    + '• <b>quote_comparison_AB.csv</b> — A·B 업체 견적 비교<br>'
+    + '• <b>meeting_minutes.txt</b> — 공정회의 회의록<br>'
+    + '• <b>press_release_brief.txt</b> — 보도자료 작성 재료<br>'
+    + '<span style="color:var(--steel); font-size:12px;">※ 모두 강의 실습용 가상 데이터입니다. 실제 업무 파일도 같은 방식으로 올리면 됩니다.</span></div>'
+  + H('데이터 분석 — 올리면 표·차트까지')
+  + pcard(B.data,'1. 현장 안전점검 분석 <span class="q">— 파일: safety_inspections.csv</span>',
+    '업로드한 ‘safety_inspections.csv’를 분석해줘.\n\n1) 현장별·위험등급(상/중/하)별 지적 건수 표\n2) ‘미조치’ 건수와 비율 — 현장별로\n3) 가장 자주 나오는 지적유형 TOP 5\n4) 추락 위험(외부비계·고소작업·개구부·단부) 관련 건수\n\n표로 정리하고, 위험이 집중된 현장과 ‘즉시 조치할 항목’ 3가지를 요약해줘. 가능하면 차트도 그려줘.',
+    '현장·등급별 표 + 미조치 비율 + 지적 TOP5 + 추락위험 집계 + 차트.',
+    '“미조치 건만 목록으로”, “평택 현장만” 으로 좁히면 그대로 안전회의 자료가 됩니다.')
+  + pcard(B.data,'2. 분양 계약 현황 분석 <span class="q">— 파일: sales_contracts.xlsx</span>',
+    '업로드한 ‘sales_contracts.xlsx’를 분석해줘.\n\n1) 단지·주택형별 계약률을 낮은 순으로 표\n2) 계약률 80% 미만 ‘관리 필요’ 항목과 잔여세대(공급−계약) 합계\n3) 향·평형이 계약률에 주는 영향(패턴)\n4) 미달 타입의 원인 가설과 프로모션 아이디어 3가지\n\n표와 차트로 보여줘.',
+    '계약률 표 + 잔여세대 합계 + 패턴 + 프로모션안 + 차트.',
+    '“잔여세대 소진 우선순위를 매겨줘” 라고 하면 분양 전략 회의 자료가 됩니다.')
+  + pcard(B.data,'3. 하자(CS) 접수 분석 <span class="q">— 파일: cs_defects.csv</span>',
+    '업로드한 ‘cs_defects.csv’를 분석해줘.\n\n1) 하자유형별 건수와 평균 처리일수\n2) 단지별 하자 분포\n3) 처리일수와 고객만족도의 관계\n4) ‘처리중·보류’로 오래 남은 지연 건 목록\n\n마지막에 재발 방지·CS 개선 포인트 3가지. 표와 차트로.',
+    '유형별 표 + 처리지연 목록 + 만족도 상관 + 개선 포인트.',
+    '“결로 하자만 따로 분석” 후 설계·시공 피드백으로 연결하세요.')
+  + pcard(B.data,'4. 견적 비교·검증 <span class="q">— 파일: quote_comparison_AB.csv</span>',
+    '업로드한 ‘quote_comparison_AB.csv’에서 A·B 업체 견적을 비교해줘.\n\n1) 공종별 금액과 두 업체 총합\n2) 한쪽만 견적한(누락 의심) 항목\n3) 단가 차이가 큰 항목 TOP 5와 차이 금액\n4) 협상 시 따져볼 질문 3가지\n\n어느 업체가 왜 유리한지 한 줄 결론도 붙여줘.',
+    '공종별 비교표 + 누락 항목 + 단가차 TOP5 + 협상 포인트 + 결론.',
+    '실제 견적서를 같은 형식으로 만들어 올리면 그대로 활용됩니다.')
+  + H('회의록 정리 · 문서 작성','m')
+  + pcard(B.meet,'5. 회의록 정리 → 실행계획 <span class="q">— 파일: meeting_minutes.txt</span>',
+    '업로드한 ‘meeting_minutes.txt’를 정리해줘.\n\n1) 결정사항·진행상황을 주제별로 요약 (공정/자재/안전/민원/분양/설비/품질)\n2) 실행계획표 — 할 일 | 담당 | 기한 | 비고 (담당·기한이 안 정해진 건 ‘미정’으로 표시)\n3) ‘이번 주 안에 처리할 일’ 3가지\n4) 다음 회의 전 소장 확인이 필요한 사항\n\n표로 깔끔하게.',
+    '주제별 요약 + 실행계획표 + 우선순위 3 + 확인필요 목록.',
+    '회의 직후 녹취·메모를 그대로 올려도 됩니다. 다음 카드(보고 메일)로 이어가세요.')
+  + pcard(B.doc,'6. 회의록 → 본사 보고 메일 <span class="q">— 파일: meeting_minutes.txt</span>',
+    '업로드한 ‘meeting_minutes.txt’를 바탕으로, 본사 공사관리팀에 보낼 ‘주간 보고 이메일’을 작성해줘.\n\n구성: 제목 / 핵심 진행상황(3~4줄) / 리스크·지원요청 / 다음 주 계획\n- 정중하고 간결한 업무 메일체\n- A4 반 장 분량',
+    '바로 발송 가능한 주간 보고 메일 초안.',
+    '“임원 보고용으로 더 짧게 / 표로” 처럼 형식만 바꿔 재활용하세요.')
+  + pcard(B.doc,'7. 보도자료 작성 <span class="q">— 파일: press_release_brief.txt</span>',
+    '업로드한 ‘press_release_brief.txt’의 사실들을 바탕으로 분양 보도자료를 작성해줘.\n\n구성: 헤드라인 / 부제 / 리드 문단(핵심 요약) / 본문(입지·규모·특화설계·일정) / 회사 강점 / 분양 담당자 코멘트(실명 대신 직책 사용) / 청약 일정·문의\n- 과장광고 표현은 피하고, 신문 보도자료 형식으로.',
+    '헤드라인부터 문의까지 갖춘 보도자료 초안.',
+    '“블로그·카드뉴스 버전”, “영문 보도자료” 로 변형 요청 가능.');
+
+/* ============================ RENDER ============================ */
+(function(){
+  var tabsEl=document.getElementById('tabs');
+  var contentEl=document.getElementById('content');
+  var html='';
+  TABS.forEach(function(t,i){
+    var b=document.createElement('button');
+    b.className='tab'+(i===0?' active':'');
+    b.innerHTML='<span class="dot" style="background:'+t.color+'"></span>'+t.label;
+    b.setAttribute('data-go',t.id);
+    b.onclick=function(){ go(t.id, b); };
+    tabsEl.appendChild(b);
+    html+='<section id="sec-'+t.id+'"'+(i===0?' class="on"':'')+'>'+S[t.id]+'</section>';
+  });
+  contentEl.innerHTML=html;
+  // fill prompts safely via textContent
+  var pres=document.querySelectorAll('pre.prompt[data-k]');
+  for(var j=0;j<pres.length;j++){ pres[j].textContent=PROMPTS[pres[j].getAttribute('data-k')]||''; }
+})();
+
+function go(id, btn){
+  var secs=document.querySelectorAll('section'); for(var i=0;i<secs.length;i++) secs[i].classList.remove('on');
+  var tgt=document.getElementById('sec-'+id); if(tgt) tgt.classList.add('on');
+  var tabs=document.querySelectorAll('.tab'); for(var k=0;k<tabs.length;k++) tabs[k].classList.remove('active');
+  if(btn) btn.classList.add('active');
+  try{ window.scrollTo({top:0, behavior:'smooth'}); }catch(e){ try{window.scrollTo(0,0);}catch(_){} }
+}
+
+function copyFrom(btn){
+  var wrap=btn.closest('.promptwrap'); if(!wrap) return;
+  var pre=wrap.querySelector('pre.prompt'); var text=pre?pre.textContent:'';
+  function done(){ toast('복사됐어요! ChatGPT에 붙여넣으세요'); var o=btn.textContent; btn.classList.add('done'); btn.textContent='✓ 복사됨';
+    setTimeout(function(){ btn.textContent=o; btn.classList.remove('done'); },1500); }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(function(){ fallback(text); done(); });
+  } else { fallback(text); done(); }
+}
+function fallback(text){
+  try{ var ta=document.createElement('textarea'); ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.focus(); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  }catch(e){}
+}
+var toastTimer;
+function toast(msg){ var t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.remove('show'); },1900); }
+</script>
+</body>
+</html>
