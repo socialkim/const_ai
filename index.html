@@ -95,6 +95,20 @@
   .reflist .r{border:1px solid var(--hair); border-radius:12px; padding:11px 14px; font-size:13.5px; color:var(--charcoal);}
   .reflist .r b{color:var(--ink);}
 
+  /* download buttons */
+  .dlgrid{display:grid; gap:10px; margin:12px 0 6px;}
+  .dlbtn{display:flex; align-items:center; gap:12px; border:1px solid var(--hair); border-radius:14px;
+    padding:12px 14px; background:#fff; text-decoration:none; color:var(--ink); transition:.15s;}
+  .dlbtn:hover{border-color:#0E9F6E; box-shadow:0 2px 10px rgba(14,159,110,.14); text-decoration:none;}
+  .dlbtn:active{transform:scale(.99);}
+  .ftype{flex:0 0 auto; font-size:11px; font-weight:800; color:#fff; padding:6px 9px; border-radius:7px; letter-spacing:.4px;}
+  .dlmeta{flex:1 1 auto; min-width:0; display:flex; flex-direction:column; gap:1px;}
+  .dlname{font-size:14px; font-weight:800; word-break:break-all; line-height:1.3;}
+  .dldesc{font-size:12.5px; color:var(--steel);}
+  .dlcta{flex:0 0 auto; font-size:12.5px; font-weight:800; color:#fff; background:#0E9F6E;
+    padding:8px 13px; border-radius:999px; white-space:nowrap;}
+  .dlall{display:inline-flex; align-items:center; gap:6px; margin-top:4px; font-size:12.5px; color:var(--steel);}
+
   footer{max-width:920px; margin:0 auto; padding:22px 18px 50px; border-top:1px solid var(--hair); color:var(--stone); font-size:12px;}
   footer b{color:var(--steel);}
 
@@ -154,6 +168,13 @@ var B={law:{cls:'b-law',txt:'법령 MCP'},arch:{cls:'b-arch',txt:'건축HUB MCP'
   task:{cls:'b-task',txt:'예약 작업'},gpt:{cls:'b-gpt',txt:'맞춤형 GPT'},int:{cls:'b-int',txt:'통합 에이전트'},
   data:{cls:'b-data',txt:'데이터 분석'},doc:{cls:'b-doc',txt:'문서 작성'},meet:{cls:'b-meet',txt:'회의록'}};
 
+function dl(file, type, color, desc){
+  return '<a class="dlbtn" href="'+file+'" download>'
+    + '<span class="ftype" style="background:'+color+'">'+type+'</span>'
+    + '<span class="dlmeta"><span class="dlname">'+file+'</span><span class="dldesc">'+desc+'</span></span>'
+    + '<span class="dlcta">받기 ↓</span></a>';
+}
+
 /* ============================ TABS ============================ */
 var TABS=[
  {id:'prep', label:'① 준비 · 연결', color:'var(--coral)'},
@@ -172,7 +193,18 @@ var S={};
 
 /* ---- ① 준비 ---- */
 S.prep =
-  L('실습 전 5분 세팅. ChatGPT(웹, Plus 이상 권장)에서 ‘개발자 모드’를 켜고 3개의 MCP를 연결합니다. 강연장에서는 이미 연결된 화면으로 시연합니다.','')
+  H('실습 파일 다운로드')
+  + '<div class="lead" style="border-color:#0E9F6E">아래 6개 파일을 받아(이 페이지와 같은 폴더에 있습니다) ‘④ 파일 실습’ 탭에서 ChatGPT에 올려 실습하세요.</div>'
+  + '<div class="dlgrid">'
+    + dl('safety_inspections.csv','CSV','#0E9F6E','현장 안전점검 48건 — 데이터 분석')
+    + dl('sales_contracts.xlsx','XLSX','#1D6F42','분양 계약 현황 — 데이터 분석')
+    + dl('cs_defects.csv','CSV','#0E9F6E','하자(CS) 접수 내역 — 데이터 분석')
+    + dl('quote_comparison_AB.csv','CSV','#0E9F6E','A·B 업체 견적 비교 — 데이터 분석')
+    + dl('meeting_minutes.txt','TXT','#6B47DC','공정회의 회의록 — 회의록 정리·문서화')
+    + dl('press_release_brief.txt','TXT','#6B47DC','보도자료 작성 재료 — 문서 제작')
+  + '</div>'
+  + '<div class="info"><span style="color:var(--steel); font-size:12px;">※ 버튼을 누르면 파일이 다운로드됩니다(GitHub Pages 등 정적 호스팅 기준). 안 열리면 길게 눌러 ‘다운로드’를 선택하세요. 모두 강의 실습용 가상 데이터입니다.</span></div>'
+  + L('이제 ChatGPT에 MCP를 연결할 차례입니다(웹, Plus 이상 권장 · 개발자 모드). 강연장에서는 이미 연결된 화면으로 시연합니다.','')
   + H('ChatGPT에 MCP 연결하기 (웹)')
   + '<div class="steps">'
   + '<div class="step"><div class="n"></div><div><h4>설정 → 커넥터(Apps) → 고급</h4><p>‘개발자 모드(Developer mode / MCP)’를 켭니다. (ChatGPT Plus·Pro·Team, 웹 기준)</p></div></div>'
